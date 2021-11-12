@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source "$CURRENT_DIR/scripts/helpers.sh"
+
+commands=(
+  "#($CURRENT_DIR/scripts/status.sh)"
+  "#($CURRENT_DIR/scripts/server.sh)"
+  "#($CURRENT_DIR/scripts/country.sh)"
+  "#($CURRENT_DIR/scripts/city.sh)"
+  "#($CURRENT_DIR/scripts/ip.sh)"
+  "#($CURRENT_DIR/scripts/status_color.sh)"
+)
+
+placeholders=(
+  "\#{mullvad_status}"
+  "\#{mullvad_server}"
+  "\#{mullvad_country}"
+  "\#{mullvad_city}"
+  "\#{mullvad_ip}"
+  "\#{mullvad_status_color}"
+)
+
+# TODO: add mullvad_status_flag for output like #{?mullvad_connected_flag, 🔍 #{mullvad_country}#{mullvad_city} ,}
+# replae with vpn icon
+
+do_interpolation() {
+  local interpolated="$1"
+
+  for i in ${!commands[@]} ; do
+    interpolated=${interpolated/${placeholders[$i]}/${commands[$i]}}
+  done
+
+  echo "$interpolated"
+}
+
+update_tmux_option() {
+  local option="$1"
+  local option_value="$(get_tmux_option "$option")"
+  local new_option_value="$(do_interpolation "$option_value")"
+  set_tmux_option "$option" "$new_option_value"
+}
+
+main() {
+  update_tmux_option "status-right"
+  update_tmux_option "status-left"
+}
+
+main

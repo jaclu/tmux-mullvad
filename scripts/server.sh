@@ -9,6 +9,9 @@ exclude_server_domain=$(get_tmux_option "@mullvad_exclude_server_domain" true)
 
 
 print_mullvad_server() {
+
+    [ "$(is_connected)" != "1" ] && return
+
     server_ip="$(mullvad status -l | grep "Connected to" | awk '{ print $6}' | cut -d':' -f1 )"
     server="$(mullvad relay list | grep $server_ip | awk '{print $1}')"
     if $exclude_server_domain; then

@@ -1,13 +1,10 @@
 <p align="center">
     <a href="https://github.com/maxrodrigo/tmux-nordvpn">
-        <img src="assets/mullvad-32x32.png" alt="tmux-mullvad logo" width="128">
+        <img src="assets/mullvad-32x32.png" alt="tmux-mullvad logo" width="32">
     </a>
-    <h3 align="center">NordVPN Tmux Plugin</h3>
+    <h3 align="center">Mullvad Tmux Plugin</h3>
     <p align="center">
-        Monitor <a href="https://nordvpn.com/">NordVPN</a> connection status from Tmux.
-    </p>
-    <p align="center">
-        <img alt="GitHub" src="https://img.shields.io/github/license/maxrodrigo/tmux-nordvpn">
+        Monitor <a href="https://mullvad.net/">Mullvad</a> connection status from Tmux.
     </p>
 </p>
 

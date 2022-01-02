@@ -34,7 +34,7 @@
 Add plugin to the list of [TPM](https://github.com/tmux-plugins/tpm) plugins in `.tmux.conf`:
 
 ```sh
-set -g @plugin 'maxrodrigo/tmux-nordvpn'
+set -g @plugin 'jaclu/tmux-mullvad'
 ```
 
 Hit `prefix + I` to fetch the plugin and source it.
@@ -46,13 +46,13 @@ If format strings are added to `status-right`, they should now be visible.
 Clone the repository:
 
 ```sh
-git clone https://github.com/maxrodrigo/tmux-nordvpn ~/.tmux/tmux-nordvpn
+git clone https://github.com/jaclu/tmux-mullvad ~/.tmux/tmux-mullvad
 ```
 
 Add this line to the bottom of `.tmux.conf`:
 
 ```txt
-run-shell ~/.tmux/tmux-nordvpn/nordvpn.tmux
+run-shell ~/.tmux/tmux-mullvad/mullvad.tmux
 ```
 
 Reload Tmux environment:
@@ -65,10 +65,9 @@ If format strings are added to `status-right`, they should now be visible.
 
 ### Requirements
 
-The plugin relays on the NordVPN native application to pull the current status.
-The command line tool is required.
+The plugin relays on the mullvad native application to be installed and running.
 
-NordVPN setup tutorials: https://support.nordvpn.com/FAQ/Setup-tutorials/
+Mullvad homepage: https://mullvad.net/
 
 ## Usage
 

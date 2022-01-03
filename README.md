@@ -12,7 +12,7 @@ Display|Description
 ![disconnected_no_bg](/assets/disconnected_no_bg.png) | When I can't use VPN, like sometimes with Primevideo, it's enough for me to see the open padlock.<br> I find a bg color to be overly distracting.
 ![connecting](/assets/connecting.png) | Connecting ...
 ![blocked](/assets/blocked.png) | VPN Blocked. Most likely my connection is down, could also be that the VPN destination has issues, why not try another city?
-![connected](/assets/connected.png) | Connected has it's color, same as with disconnected, some might prefer to disable the bg color.
+![connected](/assets/connected.png) | Connected has it's color, same as with disconnected, some might prefer to change or disable the bg color.
 ![connected_silent](/assets/connected_silent.png) | Being connected in my home country is the default, so then I don't need any notification.
 ![connected_country](/assets/connected_country.png) | When connected in another country, it makes sense to see where the VPN is routed.
 ![connected_city](/assets/connected_city.png) | If you wan't more specifics, then add city.

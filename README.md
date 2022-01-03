@@ -3,12 +3,20 @@
 To display mullvad VPN status
 
 ## Screenshots
-[blocked](/assets/blocked.png)
-[connected_city](/assets/connected_city.png)
-[connected_country](/assets/connected_country.png)
-[connecting](/assets/connecting.png)
-[disconnected_default](/assets/disconnected_default.png)
-[disconnected_no_bg](/assets/disconnected_no_bg.png)
+
+All status icons, labels, spacing arround them and colors can be altered in your config, these are just defaults, and some samples of my prefered style
+
+Display|Description
+-|-
+![disconnected_default](/assets/disconnected_default.png) | Disconnected status has it's color, if you would prefer to have a strong indicator that VPN is not active.
+![disconnected_no_bg](/assets/disconnected_no_bg.png) | When I can't use VPN, like sometimes with Primevideo, it's enough for me to see the open padlock.<br> I find a bg color to be overly distracting.
+![connecting](/assets/connecting.png) | Connecting ...
+![blocked](/assets/blocked.png) | VPN Blocked. Most likely my connection is down, could also be that the VPN destination has issues, why not try another city?
+![connected](/assets/connected.png) | Connected has it's color, same as with disconnected, some might prefer to disable the bg color.
+![connected_silent](/assets/connected_silent.png) | Being connected in my home country is the default, so then I don't need any notification.
+![connected_country](/assets/connected_country.png) | When connected in another country, it makes sense to see where the VPN is routed.
+![connected_city](/assets/connected_city.png) | If you wan't more specifics, then add city.
+
 
 
 ## Requirements
@@ -121,15 +129,12 @@ set -g @plugin 'jaclu/tmux-mullvad'
 # No colors wanted for disconnected status, just distracting.
 set -g @mullvad_disconnected_bg_color ' '
 
-# no icon displayed if connected, I just want to know when I am not connected!
-set -g @mullvad_connected_text ' '
-
 #  I only want to see connection details, if connected to "somewhere else"
 set -g @mullvad_excluded_country 'Netherlands' # dont display this country
 set -g @mullvad_excluded_city    'Amsterdam'   # dont display this city
 
 #
-#  Make spacing sensible, based on my status bar config:
+#  Making spacing sensible, based on my status bar config:
 #     #{mullvad_city}#{mullvad_country}#{mullvad_status}
 #  This way I get nice separation when items are displayed, 
 #  and no extra spaces when nothing is displayed.
@@ -153,6 +158,17 @@ Status update won't be instant. The duration depends on the `status-interval` Tm
 ```sh
 set -g status-interval 5
 ```
+
+
+## Items to tweak
+
+To make this more responsive, I cache the mullvad status for 5 seconds, this can be found in scripts/helpers.sh
+
+Item one to tweak is the cache timeout, at the top of the file max_cache_time is set
+
+Item two to tweak would be to disable caching. Check the function mullvad_status() here you can choose to use caching or not.
+
+
 
 ## Contributing
 

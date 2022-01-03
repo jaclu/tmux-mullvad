@@ -16,12 +16,12 @@ status_suffix=$(get_tmux_option "@mullvad_status_suffix")
 
 
 print_mullvad_status() {
+    local status
+
     #
     #  If this script does not recognize the status,
     #  display it as reported from mullvad
     #
-    local status
-
     status="$(mullvad_status | grep status | awk '{print $3}')"
     
     if [[ $status == "Disconnected" ]]; then

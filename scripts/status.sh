@@ -23,8 +23,7 @@ print_mullvad_status() {
     local status
 
     status="$(caching_mullvad_status | grep status | awk '{print $3}')"
-    mullvad_connected_flag=0
-
+    
     if [[ $status == "Disconnected" ]]; then
         status="$(trim "$disconnected_text")"
     elif [[ $status == "Blocked:" ]]; then
@@ -32,7 +31,6 @@ print_mullvad_status() {
     elif [[ $status == "Connecting" ]]; then
         status="$(trim "$connecting_text")"
     elif [[ $status == "Connected" ]]; then
-        mullvad_connected_flag=1
         if is_excluded_country; then
             status=""
         else
@@ -43,5 +41,3 @@ print_mullvad_status() {
 }
 
 print_mullvad_status
-
-export mullvad_connected_flag

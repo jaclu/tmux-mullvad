@@ -20,7 +20,7 @@ connected_bg_color=$(get_tmux_option "@mullvad_connected_bg_color" "green")
 
 
 print_mullvad_status_color() {
-    status="$(caching_mullvad_status| grep status | awk '{print $3}')"
+    status="$(mullvad_status| grep status | awk '{print $3}')"
 
     if [[ $status == "Blocked:" ]]; then
         color_statement "$blocked_fg_color" "$blocked_bg_color"

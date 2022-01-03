@@ -7,7 +7,7 @@ source "$CURRENT_DIR/helpers.sh"
 
 
 print_mullvad_ip() {
-    caching_mullvad_status | grep IPv4 | cut -d' ' -f2
+    mullvad_status | grep IPv4 | cut -d' ' -f2
 }
 
 print_mullvad_ip

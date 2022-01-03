@@ -55,7 +55,7 @@ Hit `<prefix> + I` to fetch the plugin and source it.
 
 ## Usage
 
-Add any of the supported format strings to `status-right` or `status-left`.
+Add any of the supported format strings to `status-left` or `status-right`.
 
 ```tmux
 set -g status-left "[#{session_name}]#{mullvad_city}#{mullvad_country}#{mullvad_status} "

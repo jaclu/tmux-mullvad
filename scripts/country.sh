@@ -2,17 +2,20 @@
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
 
+# shellcheck disable=SC1091
 source "$CURRENT_DIR/helpers.sh"
 
-excluded_country=$(get_tmux_option "@mullvad_excluded_country")
 
-
+country_prefix=$(get_tmux_option "@mullvad_country_prefix")
+country_suffix=$(get_tmux_option "@mullvad_country_suffix")
 
 
 print_mullvad_country() {
-    if [ "$(is_connected)" = "1" ]; then
-        country="$(trim $(mullvad status -l | grep Location | cut -d',' -f2-))"
-        [ "$country" != "$excluded_country" ] && echo "$country"
+    [ "$(is_connected)" != "1" ] && return
+    
+    if ! is_excluded_country; then
+        # shellcheck disable=SC2154
+        color_wrap "${country_prefix}$country${country_suffix}"
     fi
 }
 

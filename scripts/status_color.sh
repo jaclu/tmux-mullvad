@@ -20,7 +20,7 @@ connected_bg_color=$(get_tmux_option "@mullvad_connected_bg_color" "green")
 
 
 print_mullvad_status_color() {
-    status=$(mullvad status | awk '{print $3}')
+    status="$(caching_mullvad_status| grep status | awk '{print $3}')"
 
     if [[ $status == "Blocked:" ]]; then
         color_statement "$blocked_fg_color" "$blocked_bg_color"
@@ -32,7 +32,6 @@ print_mullvad_status_color() {
         color_statement "$connected_fg_color" "$connected_bg_color"
     else
         echo "status_color: Unknown status [$status]"
-        echo "$(date) status: [$status]" >> /Users/jaclu/tmp/cron/mullvad_unknown_status
     fi
 }
 

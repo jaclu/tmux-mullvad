@@ -22,9 +22,7 @@ print_mullvad_status() {
     #
     local status
 
-    status=$(mullvad status | awk '{print $3}')
-
-    
+    status="$(caching_mullvad_status | grep status | awk '{print $3}')"
     mullvad_connected_flag=0
 
     if [[ $status == "Disconnected" ]]; then

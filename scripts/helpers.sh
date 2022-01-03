@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+max_cache_time=5
+
+
 get_tmux_option() {
     local option=$1
     local default_value=$2
@@ -23,8 +26,45 @@ set_tmux_option() {
 }
 
 
+caching_mullvad_status() {
+    status_file="/tmp/mullvad-status"
+    status_file_lock="${status_file}.lock"
+
+    if [ -f "$status_file" ]; then
+        age="$(( $(date +%s) - $(date -r "$status_file" +%s) ))"
+    else
+        age=9999
+    fi
+
+
+    if [ "$age" -ge "$max_cache_time" ]; then
+        #
+        #  Try to prevent multiple calls to mullvad
+        #  each time cache file is too old, since typically there comes
+        #  several calls more or less at the same time.
+        #  Not perfect, but seems to work most of the time, so at least
+        #  thid reduces the amount of redundant calls.
+        #
+        if [ -f "$status_file_lock" ]; then
+            sleep 1
+            # recurse to get current staus, then abort
+            caching_mullvad_status
+            return
+        fi
+        touch "$status_file_lock"
+        status="$(mullvad status -l)"
+        echo "$status" > $status_file
+        rm "$status_file_lock"
+    else
+        status="$(cat "$status_file")"
+    fi
+    echo "$status"
+}
+
+
+
 is_connected() {
-    if [ "$(mullvad status | awk '{print $3}')" = "Connected" ]; then
+    if [ "$(caching_mullvad_status | grep status | awk '{print $3}')" = "Connected" ]; then
         echo "1"
     else
         echo "0"
@@ -64,12 +104,10 @@ color_statement() {
 
 is_excluded_country() {
     local excluded_country
-
     excluded_country=$(get_tmux_option "@mullvad_excluded_country")
 
     # not local, can be used by caller
-    country="$(trim "$(mullvad status -l | grep Location | cut -d',' -f2-)")"
-
+    country="$(trim "$(caching_mullvad_status | grep Location | cut -d',' -f2-)")"
     case "$country" in
         
         "$excluded_country")
@@ -89,7 +127,7 @@ is_excluded_city() {
     excluded_city=$(get_tmux_option "@mullvad_excluded_city")
 
     # not local, can be used by caller
-    city="$(mullvad status -l | grep Location | cut -d' ' -f2- | cut -d',' -f1)"
+    city="$(caching_mullvad_status | grep Location | cut -d' ' -f2- | cut -d',' -f1)"
 
     case "$city" in
         

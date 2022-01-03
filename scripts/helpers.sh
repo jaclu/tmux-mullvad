@@ -75,7 +75,8 @@ no_caching_mullvad_status() {
 
 mullvad_status() {
     #
-    #  Here you can choose to use caching or not
+    #  Here you can choose to use caching or not, activate one of the below
+    #  options.
     #
     caching_mullvad_status
     #no_caching_mullvad_status

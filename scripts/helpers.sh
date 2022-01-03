@@ -26,6 +26,9 @@ set_tmux_option() {
 }
 
 
+#
+#  Caching of status for max_cache_time seconds
+#
 caching_mullvad_status() {
     status_file="/tmp/mullvad-status"
     status_file_lock="${status_file}.lock"
@@ -37,7 +40,7 @@ caching_mullvad_status() {
     fi
 
 
-    if [ "$age" -ge "$max_cache_time" ]; then
+    if [ "$age" -gt "$max_cache_time" ]; then
         #
         #  Try to prevent multiple calls to mullvad
         #  each time cache file is too old, since typically there comes
@@ -62,9 +65,26 @@ caching_mullvad_status() {
 }
 
 
+#
+#  If you do not want caching, use this
+#
+no_caching_mullvad_status() {
+    mullvad status -l
+}
+
+
+mullvad_status() {
+    #
+    #  Here you can choose to use caching or not, activate one of the below
+    #  options.
+    #
+    caching_mullvad_status
+    #no_caching_mullvad_status
+}
+
 
 is_connected() {
-    if [ "$(caching_mullvad_status | grep status | awk '{print $3}')" = "Connected" ]; then
+    if [ "$(mullvad_status | grep status | awk '{print $3}')" = "Connected" ]; then
         echo "1"
     else
         echo "0"
@@ -107,7 +127,7 @@ is_excluded_country() {
     excluded_country=$(get_tmux_option "@mullvad_excluded_country")
 
     # not local, can be used by caller
-    country="$(trim "$(caching_mullvad_status | grep Location | cut -d',' -f2-)")"
+    country="$(trim "$(mullvad_status | grep Location | cut -d',' -f2-)")"
     case "$country" in
         
         "$excluded_country")
@@ -127,7 +147,7 @@ is_excluded_city() {
     excluded_city=$(get_tmux_option "@mullvad_excluded_city")
 
     # not local, can be used by caller
-    city="$(caching_mullvad_status | grep Location | cut -d' ' -f2- | cut -d',' -f1)"
+    city="$(mullvad_status | grep Location | cut -d' ' -f2- | cut -d',' -f1)"
 
     case "$city" in
         

@@ -2,6 +2,14 @@
 
 To display mullvad VPN status
 
+## Screenshots
+[blocked](/assets/blocked.png)
+[connected_city](/assets/connected_city.png)
+[connected_country](/assets/connected_country.png)
+[connecting](/assets/connecting.png)
+[disconnected_default](/assets/disconnected_default.png)
+[disconnected_no_bg](/assets/disconnected_no_bg.png)
+
 
 ## Requirements
 

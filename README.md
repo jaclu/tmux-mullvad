@@ -1,3 +1,33 @@
+### Options
+
+To "disable" a setting, set it to " ", spaces will be trimmed and thus nothing will end up being printed, if you set it to "" it will be ignored and the default value will be used
+
+Variable|Meaning
+-|-
+@mullvad_disconnected_text | Status - Defaults to an open padlock icon.
+@mullvad_blocked_text      | Status - Defaults to an open padlock icon.
+@mullvad_connecting_text   | Status - Defaults to an closed padlock icon.
+@mullvad_connected_text    | Status - Defaults to a closed padlock icon with key on the side. I typically set this to ' ', since the default is to be connected, I only want to be reminded if not connected. If set to a space, this text will not be displayed.
+@mullvad_status_prefix     | Prefix for the status text
+@mullvad_status_suffix     | Prefix for the status text
+
+
+Here are all available options with their default values.
+
+Code|Action
+-|-
+#{mullvad_status}         | Displays an icon for connected, disconnected, connecting, blocked<br> If connected displays country connected to, unless country is listed in @mullvad_excluded_country
+#{mullvad_country}        | Country used
+#{mullvad_server}         | Server used
+#{mullvad_city}           | City used
+#{mullvad_ip}             | IP# used
+#{mullvad_status_color}
+
+```sh
+
+
+
+
 <p align="center">
     <a href="https://github.com/maxrodrigo/tmux-nordvpn">
         <img src="assets/mullvad-32x32.png" alt="tmux-mullvad logo" width="32">
@@ -86,11 +116,6 @@ set -g status-right 'NordVPN: #{nordvpn_status_color}#{nordvpn_status} (#{nordvp
 - `#{nordvpn_ip}` - current connection IP address.
 - `#{nordvpn_status_color}` - change foreground and background color based on the VPN status.
 
-### Options
-
-Here are all available options with their default values.
-
-```sh
 @nordvpn_exclude_server_domain true # remove "nordvpn.com" from the server name.
 
 @nordvpn_connected_text "Connected" # text to display when connected

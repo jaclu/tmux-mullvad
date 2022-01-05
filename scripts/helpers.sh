@@ -146,18 +146,7 @@ is_excluded_country() {
 
     # not local, can be used by caller
     country="$(trim "$(mullvad_status | grep Location | cut -d',' -f2-)")"
-
-    # Filter ord words: unavailable
-
     case "$country" in
-
-        *"navailable"*)
-            #
-            # Fake excluded, to avoid the Location unavailable Prompt that
-            # sometimes come up during connection.
-            #
-            return 0
-            ;;
         
         "$excluded_country")
             return 0
@@ -180,14 +169,6 @@ is_excluded_city() {
 
     case "$city" in
         
-        *"navailable"*)
-            #
-            # Fake excluded, to avoid the Location unavailable Prompt that
-            # sometimes come up during connection.
-            #
-            return 0
-            ;;
-                
         "$excluded_city")
             return 0
             ;;

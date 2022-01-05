@@ -109,7 +109,7 @@ Variable|Default|Purpose
 @mullvad_connected_fg_color||
 @mullvad_connected_bg_color|green|
 @mullvad_status_prefix     | "" | Prefix for the status text.
-@mullvad_status_suffix     | "" | Prefix for the status text.
+@mullvad_status_suffix     | "" | Suffix for the status text.
 @mullvad_country_prefix    | "" | Prefix for the country name.
 @mullvad_country_suffix    | "" | Suffix for the country name.
 @mullvad_city_prefix       | "" | Prefix for the city name.

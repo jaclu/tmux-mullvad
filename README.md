@@ -2,6 +2,7 @@
 
 To display mullvad VPN status
 
+
 ## Screenshots
 
 All status icons, labels, spacing arround them and colors can be altered in your config, these are just defaults, and some samples of my prefered style
@@ -16,7 +17,6 @@ Display|Description
 ![connected_silent](/assets/connected_silent.png) | Being connected in my home country is the default, so then I don't need any notification.
 ![connected_country](/assets/connected_country.png) | When connected in another country, it makes sense to see where the VPN is routed.
 ![connected_city](/assets/connected_city.png) | If you wan't more specifics, then add city.
-
 
 
 ## Requirements
@@ -46,6 +46,7 @@ set -g @plugin 'jaclu/tmux-mullvad'
 
 Hit `<prefix> + I` to fetch the plugin and source it.
 
+
 ### Manual Installation
 
 1. Clone this repo:
@@ -65,8 +66,6 @@ Hit `<prefix> + I` to fetch the plugin and source it.
     ```console
     $ tmux source-file ~/.tmux.conf
     ```
-
-
 
 
 ## Usage
@@ -149,8 +148,6 @@ set -g @mullvad_status_suffix ' '
 ```
 
 
-
-
 ## Status Update Interval
 
 Status update won't be instant. The duration depends on the `status-interval` Tmux option. You can set `status-interval` to a low number to make the refresh faster.
@@ -169,9 +166,13 @@ Item one to tweak is the cache timeout, at the top of the file max_cache_time is
 Item two to tweak would be to disable caching. Check the function mullvad_status() here you can choose to use caching or not.
 
 
-
 ## Contributing
 
 Contributions are welcome, and they are greatly appreciated! Every little bit helps, and credit will always be given.
 
 The best way to send feedback is to file an issue at https://github.com/jaclu/tmux-mullvad/issues
+
+
+#### License
+
+[MIT](LICENSE)

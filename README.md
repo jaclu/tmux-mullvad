@@ -116,7 +116,7 @@ Variable|Default|Purpose
 @mullvad_server_prefix     | "" | Prefix for the server name.
 @mullvad_server_suffix     | "" | Suffix for the server name.
 @mullvad_excluded_country  | "" | If this is the connected country, do not display #{mullvad_country}  or #{mullvad_status} (when connected)
-@mullvad_excluded_city     | "" | If this is the connected city, do not display #{mullvad_city}
+@mullvad_excluded_city     | "" | If this is the connected city, do not display #{mullvad_city} (when connected)
 
 
 ## Example config
@@ -159,7 +159,7 @@ set -g status-interval 5
 
 ## Items to tweak
 
-To make this more responsive, I cache the mullvad status for 5 seconds, this can be found in scripts/helpers.sh
+To make this more responsive, I cache the mullvad status for 5 seconds, even if you show updates less common this wil still help, since there will be multiple status checks each time mullvad status is displayed. This can be found in scripts/helpers.sh
 
 Item one to tweak is the cache timeout, at the top of the file max_cache_time is set
 
@@ -173,6 +173,6 @@ Contributions are welcome, and they are greatly appreciated! Every little bit he
 The best way to send feedback is to file an issue at https://github.com/jaclu/tmux-mullvad/issues
 
 
-#### License
+##### License
 
 [MIT](LICENSE)

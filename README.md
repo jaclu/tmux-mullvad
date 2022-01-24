@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Monitoring Mullvad VPN status in the status line
+Monitoring Mullvad VPN status
 
 ## Screenshots
 

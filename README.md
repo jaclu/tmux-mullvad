@@ -1,7 +1,8 @@
+# Tmux-mullvad
+
 ## Purpose
 
-To display mullvad VPN status
-
+Monitoring Mullvad VPN status in the status line
 
 ## Screenshots
 
@@ -18,65 +19,41 @@ Display|Description
 ![connected_country](/assets/connected_country.png) | When connected in another country, it makes sense to see where the VPN is routed.
 ![connected_city](/assets/connected_city.png) | If you wan't more specifics, then add city.
 
+#### Dependencies
 
-## Requirements
-
-The plugin expects the mullvad native application to be installed and running.
+`tmux 2.2` or higher, `mullvad` Should be installed allong with the native Mullvad application.
 
 Mullvad homepage: https://mullvad.net/
 
-
 ## Installation
 
-### Using [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
-
-1. Add plugin to the list of TPM plugins in `.tmux.conf`:
-
-    ```
-    set -g @plugin 'jaclu/tmux-mullvad'
-    ```
-
-2. Hit `prefix + I` to fetch the plugin and source it. You should now be able to use the plugin.
+### Installation with [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
 
 Add plugin to the list of TPM plugins in `.tmux.conf`:
 
-```tmux
-set -g @plugin 'jaclu/tmux-mullvad'
-```
+    set -g @plugin 'jaclu/tmux-mullvad'
 
-Hit `<prefix> + I` to fetch the plugin and source it.
-
+Hit `prefix + I` to fetch the plugin and source it. That's it!
 
 ### Manual Installation
 
-1. Clone this repo:
+Clone the repo:
 
-    ```console
-    $ git clone https://github.com/jaclu/tmux-mullvad ~/some/path
-    ```
+    $ git clone https://github.com/jaclu/tmux-mullvad ~/clone/path
 
-2. Source the plugin in your `.tmux.conf` by adding the following to the bottom of the file:
+Add this line to the bottom of `.tmux.conf`:
 
-    ```
-    run-shell ~/some/path/mullvad.tmux
-    ```
+    run-shell ~/clone/path/mullvad.tmux
 
-3. Reload the environment by running:
-
-    ```console
-    $ tmux source-file ~/.tmux.conf
-    ```
-
+Reload TMUX environment with `$ tmux source-file ~/.tmux.conf`, and that's it.
 
 ## Usage
 
 Add any of the supported format strings to `status-left` or `status-right`.
 
-```tmux
-set -g status-left "[#{session_name}]#{mullvad_city}#{mullvad_country}#{mullvad_status} "
 ```
-
-
+set -g status-left "[#{session_name}]#{mullvad_country}#{mullvad_status}"
+```
 
 ## Supported Format Strings
 
@@ -87,7 +64,7 @@ Code|Action
 #{mullvad_city}           | City used, only displayed when connected.
 #{mullvad_server}         | Server used
 #{mullvad_ip}             | IP# used
-#{mullvad_status_color}   | The fg,bg color pair matching the current status wrapped into a tmux status bar color directive. Usage example: ``` #{mullvad_status_color}Something#[default] ```  the above mullvad format strings already comes wrapped in color directives, so this would only be meaningful if you want to display something else that should be colored in accordance with mullvad status.
+#{mullvad_status_color}   | The fg,bg color pair matching the current status wrapped into a tmux status bar color directive. Usage example: `#{mullvad_status_color}Something#[default]`  the above mullvad format strings already comes wrapped in color directives, so this would only be meaningful if you want to display something else that should be colored in accordance with mullvad status.
 
 ## Variables that can be set
 
@@ -118,11 +95,9 @@ Variable|Default|Purpose
 @mullvad_excluded_country  | "" | If this is the connected country, do not display #{mullvad_country}  or #{mullvad_status} (when connected)
 @mullvad_excluded_city     | "" | If this is the connected city, do not display #{mullvad_city} (when connected)
 
-
 ## Example config
 
-```tmux
-
+```
 set -g @plugin 'jaclu/tmux-mullvad'
 
 # No colors wanted for disconnected status, just distracting.
@@ -144,18 +119,15 @@ set -g @mullvad_city_prefix ' '
 set -g @mullvad_city_suffix ', '
 set -g @mullvad_country_suffix ' '
 set -g @mullvad_status_suffix ' '
-
 ```
-
 
 ## Status Update Interval
 
-Status update won't be instant. The duration depends on the `status-interval` Tmux option. You can set `status-interval` to a low number to make the refresh faster.
+Status update won't be instant. The duration depends on the `status-interval` Tmux option. You can set it to a low number to make the refresh faster.
 
-```sh
+```
 set -g status-interval 5
 ```
-
 
 ## Items to tweak
 
@@ -165,13 +137,11 @@ Item one to tweak is the cache timeout, at the top of the file max_cache_time is
 
 Item two to tweak would be to disable caching. Check the function mullvad_status() here you can choose to use caching or not.
 
-
 ## Contributing
 
 Contributions are welcome, and they are greatly appreciated! Every little bit helps, and credit will always be given.
 
 The best way to send feedback is to file an issue at https://github.com/jaclu/tmux-mullvad/issues
-
 
 ##### License
 

@@ -6,7 +6,7 @@ Monitoring Mullvad VPN status
 
 ## Screenshots
 
-All status icons, labels, spacing arround them and colors can be altered in your config, these are just defaults, and some samples of my prefered style
+All status icons, labels, spacing around them and colors can be altered in your config, these are just defaults, and some samples of my preferred style
 
 Display|Description
 -|-
@@ -17,11 +17,11 @@ Display|Description
 ![connected](/assets/connected.png) | Connected has it's color, same as with disconnected, some might prefer to change or disable the bg color.
 ![connected_silent](/assets/connected_silent.png) | Being connected in my home country is the default, so then I don't need any notification.
 ![connected_country](/assets/connected_country.png) | When connected in another country, it makes sense to see where the VPN is routed.
-![connected_city](/assets/connected_city.png) | If you wan't more specifics, then add city.
+![connected_city](/assets/connected_city.png) | If you want more specifics, then add city.
 
 #### Dependencies
 
-`tmux 2.2` or higher, `mullvad` Should be installed allong with the native Mullvad application.
+`tmux 2.2` or higher, `mullvad` Should be installed along with the native Mullvad application.
 
 Mullvad homepage: https://mullvad.net/
 
@@ -37,7 +37,7 @@ Hit `prefix + I` to fetch the plugin and source it. That's it!
 
 ### Manual Installation
 
-Clone the repo:
+Clone the repository:
 
     $ git clone https://github.com/jaclu/tmux-mullvad ~/clone/path
 
@@ -104,13 +104,13 @@ set -g @plugin 'jaclu/tmux-mullvad'
 set -g @mullvad_disconnected_bg_color ' '
 
 #  I only want to see connection details, if connected to "somewhere else"
-set -g @mullvad_excluded_country 'Netherlands' # dont display this country
-set -g @mullvad_excluded_city    'Amsterdam'   # dont display this city
+set -g @mullvad_excluded_country 'Netherlands' # don't display this country
+set -g @mullvad_excluded_city    'Amsterdam'   # don't display this city
 
 #
 #  Making spacing sensible, based on my status bar config:
 #     #{mullvad_city}#{mullvad_country}#{mullvad_status}
-#  This way I get nice separation when items are displayed, 
+#  This way I get nice separation when items are displayed,
 #  and no extra spaces when nothing is displayed.
 #  I wish more plugins would include prefix/suffix to make
 #  things look nice!
@@ -131,7 +131,7 @@ set -g status-interval 5
 
 ## Items to tweak
 
-To make this more responsive, I cache the mullvad status for 5 seconds, even if you show updates less common this wil still help, since there will be multiple status checks each time mullvad status is displayed. This can be found in scripts/helpers.sh
+To make this more responsive, I cache the mullvad status for 5 seconds, even if you show updates less common this will still help, since there will be multiple status checks each time mullvad status is displayed. This can be found in scripts/helpers.sh
 
 Item one to tweak is the cache timeout, at the top of the file max_cache_time is set
 

@@ -95,10 +95,10 @@ is_connected() {
 trim() {
     local var="$*"
 
-    # remove leading whitespace characters
+    # remove leading white space characters
     var="${var#"${var%%[![:space:]]*}"}"
 
-    # remove trailing whitespace characters
+    # remove trailing white space characters
     var="${var%"${var##*[![:space:]]}"}"
 
     echo "$var"
@@ -120,7 +120,7 @@ color_statement() {
         echo "#[fg=$fg]"
     elif [ -z "$fg" ] && [ -n "$bg" ]; then
         echo "#[bg=$bg]"
-    fi    
+    fi
 }
 
 
@@ -158,7 +158,7 @@ color_wrap() {
     local status_color
 
     [ -z "$txt" ] && return
-    
+
     status_color="$(mullvad_status_colors)"
     if [ -n "$status_color" ]; then
         echo "$status_color$txt#[default]"
@@ -176,7 +176,7 @@ is_excluded_country() {
     # not local, can be used by caller
     country="$(trim "$(mullvad_status | grep Location | cut -d',' -f2-)")"
     case "$country" in
-        
+
         *"navailable"*)
             #
             # Fake excluded, to avoid the Location unavailable Prompt that
@@ -205,7 +205,7 @@ is_excluded_city() {
     city="$(mullvad_status | grep Location | cut -d' ' -f2- | cut -d',' -f1)"
 
     case "$city" in
-        
+
         *"navailable"*)
             #
             # Fake excluded, to avoid the Location unavailable Prompt that

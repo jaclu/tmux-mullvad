@@ -10,7 +10,7 @@ source "$CURRENT_DIR/helpers.sh"
 
 print_mullvad_country() {
     [ "$(is_connected)" != "1" ] && return
-    
+
     if ! is_excluded_country; then
         country_prefix=$(get_tmux_option "@mullvad_country_prefix")
         country_suffix=$(get_tmux_option "@mullvad_country_suffix")

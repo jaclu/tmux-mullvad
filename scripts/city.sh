@@ -10,7 +10,7 @@ source "$CURRENT_DIR/helpers.sh"
 
 print_mullvad_city() {
     [ "$(is_connected)" != "1" ] && return
-    
+
     if ! is_excluded_city; then
         city_prefix=$(get_tmux_option "@mullvad_city_prefix")
         city_suffix=$(get_tmux_option "@mullvad_city_suffix")

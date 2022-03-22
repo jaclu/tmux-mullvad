@@ -14,7 +14,7 @@ print_mullvad_status() {
     #  display it as reported from mullvad
     #
     status="$(mullvad_status | grep status | awk '{print $3}')"
-    
+
     if [[ $status == "Disconnected" ]]; then
         disconnected_text=$(get_tmux_option "@mullvad_disconnected_text" "🔓")
         status="$(trim "$disconnected_text")"

@@ -62,11 +62,9 @@ Code|Action
 #{mullvad_status}         | Displays connection status, defaults to a padlock icon
 #{mullvad_country}       | Country used, only displayed when connected.
 #{mullvad_city}           | City used, only displayed when connected.
-#{mullvad_server}         | Server used
-#{mullvad_ip}             | IP# used
+#{mullvad_server}         | Server used, only displayed when connected.
+#{mullvad_ip}             | Public IP# used, only displayed when connected.
 #{mullvad_status_color}   | The fg,bg color pair matching the current status wrapped into a tmux status bar color directive. Usage example: `#{mullvad_status_color}Something#[default]`  the above mullvad format strings already comes wrapped in color directives, so this would only be meaningful if you want to display something else that should be colored in accordance with mullvad status.
-
-How long mullvad status is cached. Set to 0 to disable caching, see bellow for more about this
 
 ## Variables that can be set
 
@@ -112,9 +110,9 @@ Variable|Default|Purpose
 
 ## Padding the elements
 
-Unlike the \_prefix variables, that uses the status color,
+Unlike the \_prefix and \_suffix variables, that uses the status color,
 the \_no_color\_ variables controls if there should be a  space char before or after the corresponding item without any color setting. Only used if the item is not empty and thus displayed.
-This helps keeping the Status Bar compact. Setting this to 1 Will insert a space char.
+This helps keeping the Status Bar compact. Setting it to 1 will insert a space char.
 
 You can see how I use it in the example config below.
 

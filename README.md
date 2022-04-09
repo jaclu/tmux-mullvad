@@ -66,59 +66,92 @@ Code|Action
 #{mullvad_ip}             | IP# used
 #{mullvad_status_color}   | The fg,bg color pair matching the current status wrapped into a tmux status bar color directive. Usage example: `#{mullvad_status_color}Something#[default]`  the above mullvad format strings already comes wrapped in color directives, so this would only be meaningful if you want to display something else that should be colored in accordance with mullvad status.
 
+How long mullvad status is cached. Set to 0 to disable caching, see bellow for more about this
+
 ## Variables that can be set
 
 To disable a setting, set it to " ", spaces will be trimmed and thus nothing will end up being printed, if you set it to "" it will be ignored and the default value will be used.
 
 Variable|Default|Purpose
 -|-|-
-@mullvad_disconnected_text | open padlock icon   | Status
-@mullvad_disconnected_fg_color| |
-@mullvad_disconnected_bg_color| red |
-@mullvad_blocked_text      | open padlock icon   | Status
-@mullvad_blocked_fg_color  |        |
-@mullvad_blocked_bg_color  | purple |
-@mullvad_connecting_text   | closed padlock icon | Status
-@mullvad_connecting_fg_color||
-@mullvad_connecting_bg_color|yellow|
-@mullvad_connected_text    | closed padlock icon with key on the side | Status - I typically set this to ' ', since the default is to be connected, I only want to be reminded if not connected. If set to a space, this text will not be displayed.
-@mullvad_connected_fg_color||
-@mullvad_connected_bg_color|green|
-@mullvad_status_prefix     | "" | Prefix for the status text.
-@mullvad_status_suffix     | "" | Suffix for the status text.
-@mullvad_country_prefix    | "" | Prefix for the country name.
-@mullvad_country_suffix    | "" | Suffix for the country name.
-@mullvad_city_prefix       | "" | Prefix for the city name.
-@mullvad_city_suffix       | "" | Suffix for the city name.
-@mullvad_server_prefix     | "" | Prefix for the server name.
-@mullvad_server_suffix     | "" | Suffix for the server name.
-@mullvad_excluded_country  | "" | If this is the connected country, do not display #{mullvad_country}  or #{mullvad_status} (when connected)
-@mullvad_excluded_city     | "" | If this is the connected city, do not display #{mullvad_city} (when connected)
+@mullvad_cache_time              | 5  | Since multiple calls to mullvad status are made for each update of the display, cashing this will greatly improve response times. You can disable all caching by setting this to 0.
+@mullvad_disconnected_text       | open padlock icon   | Status
+@mullvad_disconnected_fg_color   | |
+@mullvad_disconnected_bg_color   | red |
+@mullvad_blocked_text            | open padlock icon   | Status
+@mullvad_blocked_fg_color        |        |
+@mullvad_blocked_bg_color        | purple |
+@mullvad_connecting_text         | closed padlock icon | Status
+@mullvad_connecting_fg_color     ||
+@mullvad_connecting_bg_color     |yellow|
+@mullvad_connected_text          | closed padlock icon with key on the side | Status
+@mullvad_connected_fg_color      ||
+@mullvad_connected_bg_color      |green|
+@mullvad_status_prefix           | "" | Prefix for the status text
+@mullvad_status_suffix           | "" | Suffix for the status text
+@mullvad_status_no_color_prefix  | 0  | Padding, see below
+@mullvad_status_no_color_suffix  | 0  | Padding, see below
+@mullvad_excluded_country        | "" | If this is the connected country, do not display #{mullvad_country}  or #{mullvad_status} (when connected)
+@mullvad_country_prefix          | "" | Prefix for the country name, using color
+@mullvad_country_suffix          | "" | Suffix for the country name, using color
+@mullvad_country_no_color_prefix | 0  | Padding, see below
+@mullvad_country_no_color_suffix | 0  | Padding, see below
+@mullvad_excluded_city           | "" | If this is the connected city, do not display #{mullvad_city} (when connected)
+@mullvad_city_prefix             | "" | Prefix for the city name
+@mullvad_city_suffix             | "" | Suffix for the city name
+@mullvad_city_no_color_prefix    | 0  | Padding, see below
+@mullvad_city_no_color_suffix    | 0  | Padding, see below
+@mullvad_server_prefix           | "" | Prefix for the server name
+@mullvad_server_suffix           | "" | Suffix for the server name
+@mullvad_server_no_color_prefix  | 0  | Padding, see below
+@mullvad_server_no_color_suffix  | 0  | Padding, see below
+@mullvad_ip_prefix               | "" | Prefix for the IP#
+@mullvad_ip_suffix               | "" | Suffix for the IP#
+@mullvad_ip_no_color_prefix      | 0  | Padding, see below
+@mullvad_ip_no_color_suffix      | 0  | Padding, see below
+
+## Padding the elements
+
+Unlike the \_prefix variables, that uses the status color,
+the \_no_color\_ variables controls if there should be a  space char before or after the corresponding item without any color setting. Only used if the item is not empty and thus displayed.
+This helps keeping the Status Bar compact. Setting this to 1 Will insert a space char.
+
+You can see how I use it in the example config below.
 
 ## Example config
 
 ```
 set -g @plugin 'jaclu/tmux-mullvad'
 
-# No colors wanted for disconnected status, just distracting.
+#
+#  I only want to be notified about where the VPN is connected if not
+#  connected to my normal location, typically when avoiding Geo blocks.
+#  Since this will negatively impact bandwith and lag, its good to have a
+#  visual reminder.
+#
+set -g @mullvad_excluded_country 'Netherlands' # dont display this country
+set -g @mullvad_excluded_city    'Amsterdam'   # dont display this city
+
+#  No colors wanted for disconnected status, just distracting.
 set -g @mullvad_disconnected_bg_color ' '
 
-#  I only want to see connection details, if connected to "somewhere else"
-set -g @mullvad_excluded_country 'Netherlands' # don't display this country
-set -g @mullvad_excluded_city    'Amsterdam'   # don't display this city
+#  Since nothing is printed when connected, we don't need to bother with the colors
+set -g @mullvad_connected_text ' '
+
+#  When city/country is printed, use comma as separator
+set -g @mullvad_city_suffix ', '
 
 #
-#  Making spacing sensible, based on my status bar config:
-#     #{mullvad_city}#{mullvad_country}#{mullvad_status}
-#  This way I get nice separation when items are displayed,
-#  and no extra spaces when nothing is displayed.
-#  I wish more plugins would include prefix/suffix to make
-#  things look nice!
+#  Keep separation if items are displayed
 #
-set -g @mullvad_city_prefix ' '
-set -g @mullvad_city_suffix ', '
-set -g @mullvad_country_suffix ' '
-set -g @mullvad_status_suffix ' '
+set -g @mullvad_country_no_color_suffix 1
+set -g @mullvad_status_no_color_suffix 1
+
+#
+#  What I use in status bar to display this status
+#
+#    #{mullvad_city}#{mullvad_country}#{mullvad_status}
+
 ```
 
 ## Status Update Interval
@@ -128,14 +161,6 @@ Status update won't be instant. The duration depends on the `status-interval` Tm
 ```
 set -g status-interval 5
 ```
-
-## Items to tweak
-
-To make this more responsive, I cache the mullvad status for 5 seconds, even if you show updates less common this will still help, since there will be multiple status checks each time mullvad status is displayed. This can be found in scripts/helpers.sh
-
-Item one to tweak is the cache timeout, at the top of the file max_cache_time is set
-
-Item two to tweak would be to disable caching. Check the function mullvad_status() here you can choose to use caching or not.
 
 ## Contributing
 

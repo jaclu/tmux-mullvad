@@ -1,6 +1,52 @@
 #!/usr/bin/env bash
+#
+#  Copyright (c) 2022: Jacob.Lundqvist@gmail.com
+#  License: MIT
+#
+#  Part of https://github.com/jaclu/tmux-mullvad
+#
+#  Version: 2.0.0 2022-04-09
+#
+#  Things used in multiple scripts
+#
 
-max_cache_time=5
+#
+#  Shorthand, to avoid manually typing package name on multiple
+#  locations, easily getting out of sync.
+#
+plugin_name="tmux-mullvad"
+
+
+#
+#  If log_file is empty or undefined, no logging will occur,
+#  so comment it out for normal usage.
+#
+log_file="/tmp/$plugin_name.log"
+
+
+#
+#  If $log_file is empty or undefined, no logging will occur.
+#
+log_it() {
+    if [ -z "$log_file" ]; then
+        return
+    fi
+    printf "[%s] %s\n" "$(date '+%H:%M:%S')" "$@" >> "$log_file"
+}
+
+
+#
+#  Display $1 as an error message in log and as a tmux display-message
+#  If no $2 or set to 0, process is not exited
+#
+error_msg() {
+    local msg="ERROR: $1"
+    local exit_code="${2:-0}"
+
+    log_it "$msg"
+    tmux display-message "$plugin_name $msg"
+    [ "$exit_code" -ne 0 ] && exit "$exit_code"
+}
 
 
 get_tmux_option() {
@@ -19,41 +65,122 @@ get_tmux_option() {
 
 
 #
-#  Caching of status for max_cache_time seconds
+#  Aargh in shell boolean true is 0, but to make the boolean parameters
+#  more relatable for users 1 is yes and 0 is no, so we need to switch
+#  them here in order for assignment to follow boolean logic in caller
 #
-caching_mullvad_status() {
-    status_file="/tmp/mullvad-status"
-    status_file_lock="${status_file}.lock"
+bool_param() {
+    case "$1" in
 
+        "0") return 1 ;;
+
+        "1") return 0 ;;
+
+        "yes" | "Yes" | "YES" | "true" | "True" | "TRUE" )
+            #  Be a nice guy and accept some common positives
+            log_it "Converted incorrect positive [$1] to 1"
+            return 0
+            ;;
+
+        "no" | "No" | "NO" | "false" | "False" | "FALSE" )
+            #  Be a nice guy and accept some common negatives
+            log_it "Converted incorrect negative [$1] to 0"
+            return 1
+            ;;
+
+        *)
+            log_it "Invalid parameter bool_param($1)"
+            error_msg "bool_param($1) - should be 0 or 1"
+            ;;
+
+    esac
+    return 1 # default to false
+}
+
+
+#
+#  Even if you only update status bar every max_cache_time or more seldom,
+#  having a cache during a given update lowers CPU waste, since mullvad
+#  typically needs to be called multiple times for each update.
+#
+#  If you do not want to use caching, set max_cache_time=0
+#
+max_cache_time="$(get_tmux_option "@mullvad_cache_time" 5)"
+
+
+mullvad_status_cache_age() {
+    local status_file="$1"
+    local age
+
+    if [ -z "$status_file" ]; then
+        error_msg "Call to mullvad_status_cache_age() with no file name!" 1
+    fi
+    # log_it "caching_mullvad_status() max_cache_time[$max_cache_time]"
     if [ -f "$status_file" ]; then
         age="$(( $(date +%s) - $(date -r "$status_file" +%s) ))"
     else
         age=9999
     fi
 
+    echo "$age"
+}
 
-    if [ "$age" -gt "$max_cache_time" ]; then
+
+#
+#  Caching of status for max_cache_time seconds
+#
+caching_mullvad_status() {
+    local long="$1"
+    local status_file="/tmp/mullvad-status"
+    local status_file_lock="${status_file}.lock"
+    local status
+
+    if [ "$(mullvad_status_cache_age "$status_file")" -gt "$max_cache_time" ]; then
         #
-        #  Try to prevent multiple calls to mullvad
-        #  each time cache file is too old, since typically there comes
-        #  several calls more or less at the same time.
-        #  Not perfect, but seems to work most of the time, so at least
-        #  thid reduces the amount of redundant calls.
+        #  Try to prevent multiple calls to mullvad each time
+        #  cache file is too old, since typically there comes several calls
+        #  more or less at the same time. Each instance waits 0.0001 - 0.9999 seconds,
+        #  so hopefully only one will do the update.
+        #  If multiple updates happens at the same time it's not the end
+        #  of the world, just wasting resources.
         #
-        if [ -f "$status_file_lock" ]; then
-            sleep 1
-            # recurse to get current staus, then abort
-            caching_mullvad_status
+        random_wait="$(( $RANDOM % 9999 ))"
+        sleep 0.$random_wait
+
+        if [ "$(mullvad_status_cache_age "$status_file")" -lt "$max_cache_time" ]; then
+            # another process has just updated the cache
+            # log_it "cache updated during wait"
+            caching_mullvad_status "$long"
             return
         fi
-        touch "$status_file_lock"
+
+        if [ -f "$status_file_lock" ]; then
+            # log_it "caching_mullvad_status - waiting for recursion"
+            sleep 0.1
+            caching_mullvad_status  "$long"
+            return
+        fi
+        touch "$status_file_lock" # prevent multiple processes to update cache
+
+        log_it "Updating status cache"
         status="$(mullvad status -l)"
         echo "$status" > $status_file
         rm "$status_file_lock"
-    else
-        status="$(cat "$status_file")"
     fi
-    echo "$status"
+
+    case "$long" in
+
+        "l" | "-l")
+            cat "$status_file"
+            ;;
+
+        "")
+            cat "$status_file" | head -n 1
+            ;;
+
+        *)
+            error_msg "caching_mullvad_status($long) - bad param!" 1
+    esac
 }
 
 
@@ -61,22 +188,37 @@ caching_mullvad_status() {
 #  If you do not want caching, use this
 #
 no_caching_mullvad_status() {
-    mullvad status -l
+    local long="$1"
+
+    case "$long" in
+
+        "l" | "-l")
+            mullvad status -l
+            ;;
+        "")
+            mullvad status
+            ;;
+
+        *)
+            error_msg "no_caching_mullvad_status($long) - bad param!" 1
+    esac
 }
 
 
+#
+#  Optional param is -l, will display extended status
+#
 mullvad_status() {
-    #
-    #  Here you can choose to use caching or not, activate one of the below
-    #  options.
-    #
-    caching_mullvad_status
-    #no_caching_mullvad_status
+    if [ "$max_cache_time" -gt 0 ]; then
+        caching_mullvad_status $1
+    else
+        no_caching_mullvad_status $1
+    fi
 }
 
 
 is_connected() {
-    if [ "$(mullvad_status | grep status | awk '{print $3}')" = "Connected" ]; then
+    if [ -n "$( mullvad_status | grep Connected )" ]; then
         echo "1"
     else
         echo "0"
@@ -94,6 +236,50 @@ trim() {
     var="${var%"${var##*[![:space:]]}"}"
 
     echo "$var"
+}
+
+
+color_statement() {
+    local fg
+    local bg
+
+    fg="$(trim "$1")"
+    bg="$(trim "$2")"
+
+    if [ -z "$fg" ] && [ -z "$bg" ]; then
+        return
+    elif [ -n "$fg" ] && [ -n "$bg" ]; then
+        echo "#[fg=$fg,bg=$bg]"
+    elif [ -n "$fg" ] && [ -z "$bg" ]; then
+        echo "#[fg=$fg]"
+    elif [ -z "$fg" ] && [ -n "$bg" ]; then
+        echo "#[bg=$bg]"
+    fi
+}
+
+
+mullvad_status_colors() {
+    local status="$(mullvad_status| grep status | awk '{print $3}')"
+    local fg_color
+    local bg_color
+
+    #
+    #  To reduce overhead, only those colors actually needed are read from tmux
+    #
+    if [[ $status == "Disconnected" ]]; then
+        fg_color=$(get_tmux_option "@mullvad_disconnected_fg_color")
+        bg_color=$(get_tmux_option "@mullvad_disconnected_bg_color" "red")
+    elif [[ $status == "Connecting" ]]; then
+        fg_color=$(get_tmux_option "@mullvad_connecting_fg_color")
+        bg_color=$(get_tmux_option "@mullvad_connecting_bg_color" "yellow")
+    elif [[ $status == "Connected" ]]; then
+        fg_color=$(get_tmux_option "@mullvad_connected_fg_color")
+        bg_color=$(get_tmux_option "@mullvad_connected_bg_color" "green")
+    else #  Default to Blocked color, to show something is off
+        fg_color=$(get_tmux_option "@mullvad_blocked_fg_color")
+        bg_color=$(get_tmux_option "@mullvad_blocked_bg_color" "purple")
+    fi
+    color_statement "$fg_color" "$bg_color"
 }
 
 
@@ -117,11 +303,12 @@ color_wrap() {
 
 is_excluded_country() {
     local excluded_country
+    # $country is shared with caller
 
     excluded_country=$(get_tmux_option "@mullvad_excluded_country")
 
     # not local, can be used by caller
-    country="$(trim "$(mullvad_status | grep Location | cut -d',' -f2-)")"
+    country="$(trim "$(mullvad_status -l | grep Location | cut -d',' -f2-)")"
     case "$country" in
 
         *"navailable"*)
@@ -141,5 +328,3 @@ is_excluded_country() {
             ;;
     esac
 }
-
-

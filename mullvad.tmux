@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
+#
+#  Copyright (c) 2022: Jacob.Lundqvist@gmail.com
+#  License: MIT
+#
+#  Part of https://github.com/jaclu/tmux-mullvad
+#
+#  Version: 2.0.0 2022-04-09
+#
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # shellcheck disable=SC1091
-source "$CURRENT_DIR/scripts/helpers.sh"
+source "$CURRENT_DIR/scripts/utils.sh"
 
 
 commands=(
@@ -23,6 +31,14 @@ placeholders=(
     "\#{mullvad_ip}"
     "\#{mullvad_status_color}"
 )
+
+
+set_tmux_option() {
+    local option=$1
+    local value=$2
+
+    tmux set-option -gq "$option" "$value"
+}
 
 
 do_interpolation() {

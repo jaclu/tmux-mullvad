@@ -5,7 +5,7 @@
 #
 #  Part of https://github.com/jaclu/tmux-mullvad
 #
-#  Version: 2.0.0 2022-04-09
+#  Version: 2.0.1 2022-04-13
 #
 #  Things used in multiple scripts
 #
@@ -21,7 +21,7 @@ plugin_name="tmux-mullvad"
 #  If log_file is empty or undefined, no logging will occur,
 #  so comment it out for normal usage.
 #
-log_file="/tmp/$plugin_name.log"
+# log_file="/tmp/$plugin_name.log"
 
 
 #
@@ -144,7 +144,7 @@ caching_mullvad_status() {
         #  If multiple updates happens at the same time it's not the end
         #  of the world, just wasting resources.
         #
-        random_wait="$(( $RANDOM % 9999 ))"
+        random_wait="$(( RANDOM % 9999 ))"
         sleep 0.$random_wait
 
         if [ "$(mullvad_status_cache_age "$status_file")" -lt "$max_cache_time" ]; then
@@ -175,7 +175,7 @@ caching_mullvad_status() {
             ;;
 
         "")
-            cat "$status_file" | head -n 1
+            head -n 1 < "$status_file"
             ;;
 
         *)

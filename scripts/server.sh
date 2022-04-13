@@ -5,7 +5,7 @@
 #
 #  Part of https://github.com/jaclu/tmux-mullvad
 #
-#  Version: 2.0.0 2022-04-09
+#  Version: 2.0.1 2022-04-13
 #
 #  Prints what server is currently being used for vpn
 #
@@ -19,7 +19,6 @@ source "$CURRENT_DIR/utils.sh"
 print_mullvad_server() {
     local server_prefix
     local server_suffix
-    local server_ip
     local server
 
     [ "$(is_connected)" != "1" ] && return

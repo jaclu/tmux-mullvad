@@ -8,16 +8,17 @@ Monitoring Mullvad VPN status
 
 All status icons, labels, spacing around them and colors can be altered in your config, these are just defaults, and some samples of my preferred style
 
+
 Display|Description
 -|-
-![disconnected_default](/assets/disconnected_default.png) | Disconnected status has it's color, if you would prefer to have a strong indicator that VPN is not active.
-![disconnected_no_bg](/assets/disconnected_no_bg.png) | When I can't use VPN, like sometimes with Primevideo, it's enough for me to see the open padlock.<br> I find a bg color to be overly distracting.
-![connecting](/assets/connecting.png) | Connecting ...
-![blocked](/assets/blocked.png) | VPN Blocked. Most likely network is down, could also be the attempted VPN destination having issues.
-![connected](/assets/connected.png) | Connected has it's color, same as with disconnected, some might prefer to change or disable the bg color.
-![connected_silent](/assets/connected_silent.png) | Being connected in my home country is the default, so then I don't need any notification.
-![connected_country](/assets/connected_country.png) | When connected in another country, it makes sense to see where the VPN is routed.
-![connected_city](/assets/connected_city.png) | If you want more specifics, then add city.
+![disconnected_default](https://user-images.githubusercontent.com/5046648/163687522-2c98d82d-3fdf-4f0c-98c7-ca16527838e7.png) | Disconnected status has it's color, if you would prefer to have a strong indicator that VPN is not active.
+![disconnected_no_bg](https://user-images.githubusercontent.com/5046648/163687537-182b6ad2-3a80-4996-b04c-469818762fc7.png) | When I can't use VPN, like sometimes with Primevideo, it's enough for me to see the open padlock.<br> I find a bg color to be overly distracting.
+![connecting](https://user-images.githubusercontent.com/5046648/163687559-c830a39b-d768-4f3e-b116-300d802b00e5.png) | Connecting ...
+![blocked](https://user-images.githubusercontent.com/5046648/163687576-dae64eab-5c29-49d7-a4e5-ea074995a77e.png) | VPN Blocked. Most likely your device is not connected to the internet. Could also be the attempted VPN destination having issues.
+![connected](https://user-images.githubusercontent.com/5046648/163687581-1a60a1fd-1879-4ff6-b769-d3c8c69948ed.png) | Connected has it's color, same as with disconnected, some might prefer to change or disable the bg color.
+![connected_silent](https://user-images.githubusercontent.com/5046648/163687580-f3a84044-4a7e-4a4d-9915-aec15503149c.png) | Being connected in my home country is the default, so then I don't need any notification.
+![connected_country](https://user-images.githubusercontent.com/5046648/163687579-77a1b902-df8d-46fe-9ed2-d6ad992ad2ec.png) | When connected in another country, it makes sense to see where the VPN is routed.
+![connected_city](https://user-images.githubusercontent.com/5046648/163687577-b61d88a9-3bcd-43a4-bc61-bf39d2a76a8a.png) | If you want more specifics, then add city.
 
 #### Dependencies
 

@@ -139,30 +139,41 @@ caching_mullvad_status() {
         #
         #  Try to prevent multiple calls to mullvad each time
         #  cache file is too old, since typically there comes several calls
-        #  more or less at the same time. Each instance waits 0.0001 - 0.9999 seconds,
+        #  more or less at the same time. Each instance waits a fraction of
+        #  a second.
         #  so hopefully only one will do the update.
         #  If multiple updates happens at the same time it's not the end
         #  of the world, just wasting resources.
         #
-        random_wait="$(( RANDOM % 9999 ))"
+        #  The builtin Bash RANDOM seems flawed in parallel processing.
+        #  If multiple processes uses it at almost exactly the same time,
+        #  something like a third of the times in this usage,
+        #  they will get the same number.
+        #  This forces multiple updates to happen. by using urandom this
+        #  is avoided.
+        #
+        # random_wait="${RANDOM:0:4}"
+        random_wait="$(od -A n -t d -N 1 /dev/urandom |tr -d ' ')"
+        # log_it "($$) will wait 0.$random_wait"
         sleep 0.$random_wait
 
         if [ "$(mullvad_status_cache_age "$status_file")" -lt "$max_cache_time" ]; then
             # another process has just updated the cache
-            # log_it "cache updated during wait"
+            log_it "($$) cache updated during wait"
             caching_mullvad_status "$long"
             return
         fi
 
         if [ -f "$status_file_lock" ]; then
-            # log_it "caching_mullvad_status - waiting for recursion"
-            sleep 0.1
+            random_wait="$(( RANDOM % 20 ))"
+            # log_it "($$) update in progress, give it a moment"
+            sleep 0.05
             caching_mullvad_status  "$long"
             return
         fi
         touch "$status_file_lock" # prevent multiple processes to update cache
 
-        log_it "Updating status cache"
+        log_it "($$) Updating status cache"
         status="$(mullvad status -l)"
         echo "$status" > $status_file
         rm "$status_file_lock"

@@ -5,7 +5,7 @@
 #
 #  Part of https://github.com/jaclu/tmux-mullvad
 #
-#  Version: 2.1.0 2022-06-09
+#  Version: 2.1.1 2022-06-09
 #
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -62,13 +62,12 @@ update_tmux_option() {
 }
 
 check_mullvad_version() {
-
-    if [ -n "$(mullvad status | grep 'Tunnel status')" ]; then
+    if mullvad status | grep -q 'Tunnel status' ; then
         log_it "This mullvad uses old style status output"
-        touch "$old_synatx_indicator"
+        touch "$old_syntax_indicator"
     else
         log_it "This mullvad uses new style status output"
-        rm -f "$old_synatx_indicator"
+        rm -f "$old_syntax_indicator"
     fi
 }
 

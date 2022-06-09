@@ -26,7 +26,7 @@ plugin_name="tmux-mullvad"
 #  This way during regular operations version does not need to be checked,
 #  just the presence of this file.
 #
-old_synatx_indicator="/tmp/tmux-mullvad-old-syntax"
+old_syntax_indicator="/tmp/tmux-mullvad-old-status-syntax"
 
 
 #
@@ -332,7 +332,7 @@ is_excluded_country() {
     excluded_country=$(get_tmux_option "@mullvad_excluded_country")
 
     # not local, can be used by caller
-    if [ -f "$old_synatx_indicator" ]; then
+    if [ -f "$old_syntax_indicator" ]; then
         country="$(trim "$(mullvad_status -l | grep Location | cut -d',' -f2-)")"
     else
         country="$(trim "$(mullvad_status -l | grep "Connected to" | cut -d',' -f2-)")"

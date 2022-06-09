@@ -5,7 +5,7 @@
 #
 #  Part of https://github.com/jaclu/tmux-mullvad
 #
-#  Version: 2.2.0 2022-06-09
+#  Version: 2.2.1 2022-06-09
 #
 #  Prints what city the VPN server is located in
 #
@@ -22,7 +22,8 @@ is_excluded_city() {
     excluded_city=$(get_tmux_option "@mullvad_excluded_city")
 
     # not local, can be used by caller
-    if [ -f "$old_synatx_indicator" ]; then
+    # shellcheck disable=SC2154
+    if [ -f "$old_syntax_indicator" ]; then
         city="$(mullvad_status -l | grep Location | cut -d' ' -f2- | cut -d',' -f1)"
     else
         city="$(mullvad_status -l | grep 'Connected to' | awk '{ print $5}' | cut -d',' -f1)"

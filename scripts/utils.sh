@@ -5,7 +5,7 @@
 #
 #  Part of https://github.com/jaclu/tmux-mullvad
 #
-#  Version: 2.1.0 2022-06-09
+#  Version: 2.1.1 2022-06-09
 #
 #  Things used in multiple scripts
 #
@@ -167,7 +167,7 @@ caching_mullvad_status() {
         # random_wait="${RANDOM:0:4}"
         random_wait="$(od -A n -t d -N 1 /dev/urandom |tr -d ' ')"
         # log_it "($$) will wait 0.$random_wait"
-        sleep 0.$random_wait
+        sleep "0.$random_wait"
 
         if [ "$(mullvad_status_cache_age "$status_file")" -lt "$max_cache_time" ]; then
             # another process has just updated the cache
@@ -249,6 +249,16 @@ is_connected() {
 }
 
 
+get_connection_status() {
+    # not local, can be used by caller
+    if [ -f "$old_syntax_indicator" ]; then
+        status="$(mullvad_status | grep status | awk '{print $3}')"
+    else
+        status="$(mullvad_status | head -n 1 | awk '{print $1}')"
+    fi
+}
+
+
 trim() {
     local var="$*"
 
@@ -286,7 +296,7 @@ mullvad_status_colors() {
     local fg_color
     local bg_color
 
-    status="$(mullvad_status| grep status | awk '{print $3}')"
+    get_connection_status
     #
     #  To reduce overhead, only those colors actually needed are read from tmux
     #

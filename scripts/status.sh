@@ -5,7 +5,7 @@
 #
 #  Part of https://github.com/jaclu/tmux-mullvad
 #
-#  Version: 2.0.0 2022-04-09
+#  Version: 2.0.1 2022-06-09
 #
 #  Prints current status
 #
@@ -20,12 +20,9 @@ print_mullvad_status() {
     local status
     local msg
 
-    #
-    #  If this script does not recognize the status,
-    #  display it as reported from mullvad
-    #
-    status="$(mullvad_status | grep status | awk '{print $3}')"
+    get_connection_status
 
+    log_it "Status reported [$status]"
     if [[ $status == "Disconnected" ]]; then
         status="$(trim "$(get_tmux_option "@mullvad_disconnected_text" "🔓")")"
     elif [[ $status == "Blocked:" ]]; then

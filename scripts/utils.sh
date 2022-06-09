@@ -5,7 +5,7 @@
 #
 #  Part of https://github.com/jaclu/tmux-mullvad
 #
-#  Version: 2.0.2 2022-04-13
+#  Version: 2.1.0 2022-06-09
 #
 #  Things used in multiple scripts
 #
@@ -15,6 +15,18 @@
 #  locations, easily getting out of sync.
 #
 plugin_name="tmux-mullvad"
+
+#
+#  Summer 2022 - Mullvad has changed its status output in the beta
+#
+#  So depending on what version is running, status needs to be interpreted
+#  quite differently.
+#  When tmux is started/reloaded a check is made and if the old syntax
+#  should be used this file is touched. If not it is removed.
+#  This way during regular operations version does not need to be checked,
+#  just the presence of this file.
+#
+old_synatx_indicator="/tmp/tmux-mullvad-old-syntax"
 
 
 #
@@ -320,7 +332,11 @@ is_excluded_country() {
     excluded_country=$(get_tmux_option "@mullvad_excluded_country")
 
     # not local, can be used by caller
-    country="$(trim "$(mullvad_status -l | grep Location | cut -d',' -f2-)")"
+    if [ -f "$old_synatx_indicator" ]; then
+        country="$(trim "$(mullvad_status -l | grep Location | cut -d',' -f2-)")"
+    else
+        country="$(trim "$(mullvad_status -l | grep "Connected to" | cut -d',' -f2-)")"
+    fi
     case "$country" in
 
         *"navailable"*)

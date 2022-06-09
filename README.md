@@ -56,11 +56,7 @@ Reload TMUX environment with `$ tmux source-file ~/.tmux.conf`, and that's it.
 
 Add any of the supported format strings to `status-left` or `status-right`.
 
-```
-set -g status-left "[#{session_name}]#{mullvad_country}#{mullvad_status}"
-```
-
-## Supported Format Strings
+### Supported Format Strings
 
 Code|Action
 -|-
@@ -71,7 +67,7 @@ Code|Action
 #{mullvad_ip}             | Public IP# used, only displayed when connected.
 #{mullvad_status_color}   | The fg,bg color pair matching the current status wrapped into a tmux status bar color directive. Usage example: `#{mullvad_status_color}Something#[default]`  the above mullvad format strings already comes wrapped in color directives, so this would only be meaningful if you want to display something else that should be colored in accordance with mullvad status.
 
-## Variables that can be set
+### Variables that can be set
 
 To disable a setting, set it to " ", spaces will be trimmed and thus nothing will end up being printed, if you set it to "" it will be ignored and the default value will be used.
 
@@ -113,7 +109,7 @@ Variable|Default|Purpose
 @mullvad_ip_no_color_prefix      | 0  | Padding, see below
 @mullvad_ip_no_color_suffix      | 0  | Padding, see below
 
-## Padding the elements
+### Padding the elements
 
 Unlike the \_prefix and \_suffix variables, that uses the status color,
 the \_no_color\_ variables controls if there should be a  space char before or after the corresponding item without any color setting. Only used if the item is not empty and thus displayed.
@@ -162,7 +158,7 @@ set -g @mullvad_status_no_color_suffix 1
 
 ## Status Update Interval
 
-Status update won't be instant. The duration depends on the `status-interval` Tmux option. You can set it to a low number to make the refresh faster.
+Status update won't be instant. The lag depends on the `status-interval` Tmux option. You can set it to a low number to make the refresh faster.
 
 ```
 set -g status-interval 5

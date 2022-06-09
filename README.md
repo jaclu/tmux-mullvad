@@ -1,5 +1,9 @@
 # Tmux-mullvad
 
+#### Recent changes
+
+- The latest beta has changed output for `mullvad status`. On startup, output is checked and if the old notation is used, a file under /tmp is touched, so that version checks are not needed for each action. If file is present, use old notation, if absent use new.<br> This means that if you change to or from the beta when tmux is running, you need to source the config for the plugin to become aware of the changed status notation.
+
 ## Purpose
 
 Monitoring Mullvad VPN status
@@ -73,7 +77,7 @@ To disable a setting, set it to " ", spaces will be trimmed and thus nothing wil
 
 Variable|Default|Purpose
 -|-|-
-@mullvad_cache_time              | 5  | Since multiple calls to mullvad status are made for each update of the display, cashing this will greatly improve response times. You can disable all caching by setting this to 0.
+@mullvad_cache_time              | 5  | Since typically multiple checks of mullvad status are made for each update of the display, cashing this will greatly improve response times. You can disable all caching by setting this to 0.<br> Even if this matches your status interval, this will still make the check much faster, since only one actual status check is done.
 @mullvad_disconnected_text       | open padlock icon   | Status
 @mullvad_disconnected_fg_color   | |
 @mullvad_disconnected_bg_color   | red |
@@ -147,9 +151,12 @@ set -g @mullvad_country_no_color_suffix 1
 set -g @mullvad_status_no_color_suffix 1
 
 #
-#  What I use in status bar to display this status
+#  What I use in status bar to display this status.
+#  Since no_color padding is used if something is displayed, there is no need
+#  to waste space in the status bar for separation that will just end up being
+#  a double space when nothing is displayed.
 #
-#    #{mullvad_city}#{mullvad_country}#{mullvad_status}
+#    other stuff before#{mullvad_city}#{mullvad_country}#{mullvad_status}other stuff after...
 
 ```
 

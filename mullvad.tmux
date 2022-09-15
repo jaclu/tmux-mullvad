@@ -5,7 +5,7 @@
 #
 #  Part of https://github.com/jaclu/tmux-mullvad
 #
-#  Version: 2.1.1 2022-06-09
+#  Version: 2.1.2 2022-09-15
 #
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -37,7 +37,7 @@ set_tmux_option() {
     local option=$1
     local value=$2
 
-    tmux set-option -gq "$option" "$value"
+    $TMUX_BIN set-option -gq "$option" "$value"
 }
 
 

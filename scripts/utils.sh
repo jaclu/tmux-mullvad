@@ -24,7 +24,7 @@ plugin_name="tmux-mullvad"
 #  impact. In all calls to tmux I use $TMUX_BIN instead in the rest of this
 #  plugin.
 #
-[ -z "$TMUX_BIN" ] && TMUX_BIN="tmux"
+[[ -z "$TMUX_BIN" ]] && TMUX_BIN="tmux"
 
 #
 #  Summer 2022 - Mullvad has changed its status output in the beta
@@ -38,24 +38,21 @@ plugin_name="tmux-mullvad"
 #
 old_syntax_indicator="/tmp/tmux-mullvad-old-status-syntax"
 
-
 #
 #  If log_file is empty or undefined, no logging will occur,
 #  so comment it out for normal usage.
 #
 # log_file="/tmp/$plugin_name.log"
 
-
 #
 #  If $log_file is empty or undefined, no logging will occur.
 #
 log_it() {
-    if [ -z "$log_file" ]; then
+    if [[ -z "$log_file" ]]; then
         return
     fi
-    printf "[%s] %s\n" "$(date '+%H:%M:%S')" "$@" >> "$log_file"
+    printf "[%s] %s\n" "$(date '+%H:%M:%S')" "$@" >>"$log_file"
 }
-
 
 #
 #  Display $1 as an error message in log and as a tmux display-message
@@ -67,9 +64,8 @@ error_msg() {
 
     log_it "$msg"
     $TMUX_BIN display-message "$plugin_name $msg"
-    [ "$exit_code" -ne 0 ] && exit "$exit_code"
+    [[ "$exit_code" -ne 0 ]] && exit "$exit_code"
 }
-
 
 get_tmux_option() {
     local option=$1
@@ -85,7 +81,6 @@ get_tmux_option() {
     fi
 }
 
-
 #
 #  Aargh in shell boolean true is 0, but to make the boolean parameters
 #  more relatable for users 1 is yes and 0 is no, so we need to switch
@@ -94,31 +89,30 @@ get_tmux_option() {
 bool_param() {
     case "$1" in
 
-        "0") return 1 ;;
+    "0") return 1 ;;
 
-        "1") return 0 ;;
+    "1") return 0 ;;
 
-        "yes" | "Yes" | "YES" | "true" | "True" | "TRUE" )
-            #  Be a nice guy and accept some common positives
-            log_it "Converted incorrect positive [$1] to 1"
-            return 0
-            ;;
+    "yes" | "Yes" | "YES" | "true" | "True" | "TRUE")
+        #  Be a nice guy and accept some common positives
+        log_it "Converted incorrect positive [$1] to 1"
+        return 0
+        ;;
 
-        "no" | "No" | "NO" | "false" | "False" | "FALSE" )
-            #  Be a nice guy and accept some common negatives
-            log_it "Converted incorrect negative [$1] to 0"
-            return 1
-            ;;
+    "no" | "No" | "NO" | "false" | "False" | "FALSE")
+        #  Be a nice guy and accept some common negatives
+        log_it "Converted incorrect negative [$1] to 0"
+        return 1
+        ;;
 
-        *)
-            log_it "Invalid parameter bool_param($1)"
-            error_msg "bool_param($1) - should be 0 or 1"
-            ;;
+    *)
+        log_it "Invalid parameter bool_param($1)"
+        error_msg "bool_param($1) - should be 0 or 1"
+        ;;
 
     esac
     return 1 # default to false
 }
-
 
 #
 #  Even if you only update status bar every max_cache_time or more seldom,
@@ -129,24 +123,22 @@ bool_param() {
 #
 max_cache_time="$(get_tmux_option "@mullvad_cache_time" 5)"
 
-
 mullvad_status_cache_age() {
     local status_file="$1"
     local age
 
-    if [ -z "$status_file" ]; then
+    if [[ -z "$status_file" ]]; then
         error_msg "Call to mullvad_status_cache_age() with no file name!" 1
     fi
     # log_it "caching_mullvad_status() max_cache_time[$max_cache_time]"
-    if [ -f "$status_file" ]; then
-        age="$(( $(date +%s) - $(date -r "$status_file" +%s) ))"
+    if [[ -f "$status_file" ]]; then
+        age="$(($(date +%s) - $(date -r "$status_file" +%s)))"
     else
         age=9999
     fi
 
     echo "$age"
 }
-
 
 #
 #  Caching of status for max_cache_time seconds
@@ -157,7 +149,7 @@ caching_mullvad_status() {
     local status_file_lock="${status_file}.lock"
     local status
 
-    if [ "$(mullvad_status_cache_age "$status_file")" -gt "$max_cache_time" ]; then
+    if [[ "$(mullvad_status_cache_age "$status_file")" -gt "$max_cache_time" ]]; then
         #
         #  Try to prevent multiple calls to mullvad each time
         #  cache file is too old, since typically there comes several calls
@@ -175,47 +167,47 @@ caching_mullvad_status() {
         #  is avoided.
         #
         # random_wait="${RANDOM:0:4}"
-        random_wait="$(od -A n -t d -N 1 /dev/urandom |tr -d ' ')"
+        random_wait="$(od -A n -t d -N 1 /dev/urandom | tr -d ' ')"
         # log_it "($$) will wait 0.$random_wait"
         sleep "0.$random_wait"
 
-        if [ "$(mullvad_status_cache_age "$status_file")" -lt "$max_cache_time" ]; then
+        if [[ "$(mullvad_status_cache_age "$status_file")" -lt "$max_cache_time" ]]; then
             # another process has just updated the cache
             log_it "($$) cache updated during wait"
             caching_mullvad_status "$long"
             return
         fi
 
-        if [ -f "$status_file_lock" ]; then
-            random_wait="$(( RANDOM % 20 ))"
+        if [[ -f "$status_file_lock" ]]; then
+            random_wait="$((RANDOM % 20))"
             # log_it "($$) update in progress, give it a moment"
             sleep 0.05
-            caching_mullvad_status  "$long"
+            caching_mullvad_status "$long"
             return
         fi
         touch "$status_file_lock" # prevent multiple processes to update cache
 
         log_it "($$) Updating status cache"
         status="$(mullvad status -l)"
-        echo "$status" > $status_file
+        echo "$status" >$status_file
         rm "$status_file_lock"
     fi
 
     case "$long" in
 
-        "l" | "-l")
-            cat "$status_file"
-            ;;
+    "l" | "-l")
+        cat "$status_file"
+        ;;
 
-        "")
-            head -n 1 < "$status_file"
-            ;;
+    "")
+        head -n 1 <"$status_file"
+        ;;
 
-        *)
-            error_msg "caching_mullvad_status($long) - bad param!" 1
+    *)
+        error_msg "caching_mullvad_status($long) - bad param!" 1
+        ;;
     esac
 }
-
 
 #
 #  If you do not want caching, use this
@@ -225,30 +217,29 @@ no_caching_mullvad_status() {
 
     case "$long" in
 
-        "l" | "-l")
-            mullvad status -l
-            ;;
-        "")
-            mullvad status
-            ;;
+    "l" | "-l")
+        mullvad status -l
+        ;;
+    "")
+        mullvad status
+        ;;
 
-        *)
-            error_msg "no_caching_mullvad_status($long) - bad param!" 1
+    *)
+        error_msg "no_caching_mullvad_status($long) - bad param!" 1
+        ;;
     esac
 }
-
 
 #
 #  Optional param is -l, will display extended status
 #
 mullvad_status() {
-    if [ "$max_cache_time" -gt 0 ]; then
+    if [[ "$max_cache_time" -gt 0 ]]; then
         caching_mullvad_status "$1"
     else
         no_caching_mullvad_status "$1"
     fi
 }
-
 
 is_connected() {
     if mullvad_status | grep -q Connected; then
@@ -258,16 +249,14 @@ is_connected() {
     fi
 }
 
-
 get_connection_status() {
     # not local, can be used by caller
-    if [ -f "$old_syntax_indicator" ]; then
+    if [[ -f "$old_syntax_indicator" ]]; then
         status="$(mullvad_status | grep status | awk '{print $3}')"
     else
         status="$(mullvad_status | head -n 1 | awk '{print $1}')"
     fi
 }
-
 
 trim() {
     local var="$*"
@@ -281,7 +270,6 @@ trim() {
     echo "$var"
 }
 
-
 color_statement() {
     local fg
     local bg
@@ -289,22 +277,21 @@ color_statement() {
     fg="$(trim "$1")"
     bg="$(trim "$2")"
 
-    if [ -z "$fg" ] && [ -z "$bg" ]; then
+    if [[ -z "$fg" ]] && [[ -z "$bg" ]]; then
         return
-    elif [ -n "$fg" ] && [ -n "$bg" ]; then
+    elif [[ -n "$fg" ]] && [[ -n "$bg" ]]; then
         echo "#[fg=$fg,bg=$bg]"
-    elif [ -n "$fg" ] && [ -z "$bg" ]; then
+    elif [[ -n "$fg" ]] && [[ -z "$bg" ]]; then
         echo "#[fg=$fg]"
-    elif [ -z "$fg" ] && [ -n "$bg" ]; then
+    elif [[ -z "$fg" ]] && [[ -n "$bg" ]]; then
         echo "#[bg=$bg]"
     fi
 }
 
-
 mullvad_status_colors() {
     local status
     local fg_color
-    local bg_color
+    local bg_color][
 
     get_connection_status
     #
@@ -326,7 +313,6 @@ mullvad_status_colors() {
     color_statement "$fg_color" "$bg_color"
 }
 
-
 #
 #  If color is defined for current status, wrap text in a color statement
 #
@@ -334,16 +320,15 @@ color_wrap() {
     local txt="$1"
     local status_color
 
-    [ -z "$txt" ] && return
+    [[ -z "$txt" ]] && return
 
     status_color="$(mullvad_status_colors)"
-    if [ -n "$status_color" ]; then
+    if [[ -n "$status_color" ]]; then
         echo "$status_color$txt#[default]"
     else
         echo "$txt"
     fi
 }
-
 
 is_excluded_country() {
     local excluded_country
@@ -352,27 +337,27 @@ is_excluded_country() {
     excluded_country=$(get_tmux_option "@mullvad_excluded_country")
 
     # not local, can be used by caller
-    if [ -f "$old_syntax_indicator" ]; then
+    if [[ -f "$old_syntax_indicator" ]]; then
         country="$(trim "$(mullvad_status -l | grep Location | cut -d',' -f2-)")"
     else
         country="$(trim "$(mullvad_status -l | grep "Connected to" | cut -d',' -f2-)")"
     fi
     case "$country" in
 
-        *"navailable"*)
-            #
-            # Fake excluded, to avoid the Location unavailable Prompt that
-            # sometimes come up during connection.
-            #
-            return 0
-            ;;
+    *"navailable"*)
+        #
+        # Fake excluded, to avoid the Location unavailable Prompt that
+        # sometimes come up during connection.
+        #
+        return 0
+        ;;
 
-        "$excluded_country")
-            return 0
-            ;;
+    "$excluded_country")
+        return 0
+        ;;
 
-        *)
-            return 1
-            ;;
+    *)
+        return 1
+        ;;
     esac
 }

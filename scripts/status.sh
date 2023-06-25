@@ -10,11 +10,10 @@
 #  Prints current status
 #
 
-CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck disable=SC1091
 source "$CURRENT_DIR/utils.sh"
-
 
 print_mullvad_status() {
     local status
@@ -42,14 +41,14 @@ print_mullvad_status() {
             status="$(trim "$(get_tmux_option "@mullvad_connected_text" "🔐")")"
         fi
     fi
-    if [ -n "$status" ]; then
+    if [[ -n "$status" ]]; then
         status_prefix=$(get_tmux_option "@mullvad_status_prefix")
         status_suffix=$(get_tmux_option "@mullvad_status_suffix")
         msg="$(color_wrap "$status_prefix$status$status_suffix")"
         # log_it "Status before non blank spaces:[$msg]"
-        if [ -n "$msg" ]; then
+        if [[ -n "$msg" ]]; then
             if bool_param "$(get_tmux_option "@mullvad_status_no_color_prefix" 0)"; then
-               msg=" $msg"
+                msg=" $msg"
             fi
             if bool_param "$(get_tmux_option "@mullvad_status_no_color_suffix" 0)"; then
                 msg="$msg "

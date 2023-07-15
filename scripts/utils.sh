@@ -291,7 +291,7 @@ color_statement() {
 mullvad_status_colors() {
     local status
     local fg_color
-    local bg_color][
+    local bg_color
 
     get_connection_status
     #

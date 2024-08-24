@@ -189,7 +189,7 @@ caching_mullvad_status() {
 
         log_it "($$) Updating status cache"
         status="$(mullvad status -l)"
-        echo "$status" >$status_file
+        echo "$status" >"$status_file"
         rm "$status_file_lock"
     fi
 

@@ -2,3 +2,6 @@
 \#*
 tests/
 .DS_Store
+
+# olint linting tool cache
+.cache.olint
